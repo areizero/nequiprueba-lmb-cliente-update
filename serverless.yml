@@ -1,0 +1,25 @@
+service: nequiprueba-lmb-cliente-update
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  environment:    
+    PATH_RESOURCES: /v1/clientes/update
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource: arn:aws:dynamodb:us-east-1:124436490636:table/nequi-cliente
+
+functions:
+  updateCliente:
+    handler: handler.update
+    events:
+      - http:
+          path: ${self:provider.environment.PATH_RESOURCES}
+          method: put
+          cors: true
+    memorySize: 128
